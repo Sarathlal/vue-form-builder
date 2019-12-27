@@ -1,0 +1,29 @@
+<html>
+   <head>
+      <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+   </head>
+      <body>
+
+
+<div id="app">
+  <h1>Vue JS Multiple Fields Repeater</h1>
+  <ul class="border" v-for="field in fields">
+	<li>
+    <input v-model="field.name" placeholder="Field Name" v-on:change="createJson">
+    <select v-model="field.type" >
+	  <option value="text">Text</option>
+	  <option value="email">Email</option>
+	  <option value="textarea">Textarea</option>
+	</select>
+	</li>
+  </ul>
+  <button @click="AddField">
+    New Field
+  </button>
+  <pre>{{ $data['fields'] | json }}</pre>
+</div>
+
+
+   </body>
+   <script type="text/javascript" src="js/main.js"></script>
+</html>
