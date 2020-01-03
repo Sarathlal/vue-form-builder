@@ -1,28 +1,29 @@
 <html>
    <head>
       <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+      <link href="css/prism.css" rel="stylesheet" />
    </head>
       <body>
 
 
 <div id="app">
-	
+
   <h1>Vue JS Multiple Fields Repeater</h1>
   <ul class="border" v-for="(field, index) in fields">
 	<li>
     <input v-model="field.name" placeholder="Field Name" @change="UpdateHTMLData">
     <input v-model="field.label" placeholder="label" @change="UpdateHTMLData">
     <select v-model="field.type" @change="UpdateHTMLData">
-	  <option value="text">Text</option>
-	  <option value="email">Email</option>
-	  <option value="textarea">Textarea</option>
-	  <option value="select">Select</option>
-	  <option value="radio">Radio</option>
-	  <option value="checkbox">Checkbox</option>
+	  <option value="text-field">Text</option>
+	  <option value="email-field">Email</option>
+	  <option value="textarea-field">Textarea</option>
+	  <option value="select-field">Select</option>
+	  <option value="radio-field">Radio</option>
+	  <option value="checkbox-field">Checkbox</option>
 	</select>
-	
-	
-	<div v-if="field.type === 'select'">
+
+
+	<div v-if="field.type === 'select-field'">
 		<p>Options</p>
 			<ul>
 				<li class="border" v-for="(option, opt_index) in field.options" >
@@ -32,49 +33,43 @@
 			</ul>
 			<button @click="NewSelectOption(index)">New Option</button>
 	</div>
-	
-	<div v-else-if="field.type === 'radio'">
+
+	<div v-else-if="field.type === 'input-radio'">
 	  Something else was selected.
 	</div>
-	
-	
+
+
 	</li>
   </ul>
   <button @click="AddField">
     New Field
   </button>
-  
-  <div id="render-form" ref="formdata">
-	<template v-for="(field, index) in fields">
-		<p v-if="field.type === 'text'">
-			<field-label  v-bind:field="field" ></field-label>
-			<input-text v-bind:field="field" ></input-text>
-		</p>
-		<p v-if="field.type === 'email'">
-			<field-label  v-bind:field="field" ></field-label>
-			<input-email v-bind:field="field" ></input-email>
-		</p>
-		<p v-if="field.type === 'select'">
-			<field-label  v-bind:field="field" ></field-label>
-			<input-select v-bind:field="field" ></input-select>
-		</p>
-		<p v-if="field.type === 'textarea'">
-			<field-label  v-bind:field="field" ></field-label>
-			<input-textarea v-bind:field="field" ></input-textarea>
-		</p>
-	</template>
-	</div>
 
-<pre><code v-pre>{{ $data['html'] }}</code></pre>
 
+
+
+    <div id="render-form" ref="formdata" v-model="html" v-cloak>
+        <component
+                 v-for="field in fields"
+                 :key="field.name"
+                 :is="field.type"
+                 v-bind="field">
+        </component>
+    </div>
+
+<div id="html-data">
+    <pre><code class="language-html">{{ $data['html'] }}</code></pre>
+</div>
 
 <pre>{{ $data['fields'] | json }}</pre>
 
-  
-  
+
+
 </div>
 
 
    </body>
    <script type="text/javascript" src="js/main.js"></script>
+   <!-- <script type="text/javascript" src="js/prism.js"></script> -->
+
 </html>
