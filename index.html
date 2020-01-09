@@ -1,70 +1,100 @@
 <html>
    <head>
       <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-      <link href="css/prism.css" rel="stylesheet" />
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <link href="css/main.css" rel="stylesheet" />
+      <link href="css/fontello.css" rel="stylesheet" />
+
    </head>
       <body>
 
-
+<div class="container">
 <div id="app">
+<div class="row">
+    <div class="col-6">
+        <div class="form-builder">
+            <transition-group name="list" tag="ul" class="field-list">
+                <li v-for="(field, index) in fields" :key="index+0" v-bind:class="{ 'active': field.showEdit  }">
+                    <p v-if="!field.showEdit" @click="openEditor(field)" >{{ field.name }}</p>
+                    <p  v-if="field.showEdit" class="12-col">
+                        <label class="inline">Field type</label>
 
-  <h1>Vue JS Multiple Fields Repeater</h1>
-  <ul class="border" v-for="(field, index) in fields">
-	<li>
-    <input v-model="field.name" placeholder="Field Name" @change="UpdateHTMLData">
-    <input v-model="field.label" placeholder="label" @change="UpdateHTMLData">
-    <select v-model="field.type" @change="UpdateHTMLData">
-	  <option value="text-field">Text</option>
-	  <option value="email-field">Email</option>
-	  <option value="textarea-field">Textarea</option>
-	  <option value="select-field">Select</option>
-	  <option value="radio-field">Radio</option>
-	  <option value="checkbox-field">Checkbox</option>
-	</select>
+                        <input :id="'text_'+index" type="radio" name="field.type" value="text-field" v-model="field.type"><label class="inline" :for="'text_'+index">Text</label>
+                        <input :id="'email_'+index" type="radio" name="field.type" value="email-field" v-model="field.type"><label class="inline" :for="'email_'+index">Email</label>
+                        <input :id="'textarea_'+index" type="radio" name="field.type" value="textarea-field" v-model="field.type"><label class="inline" :for="'textarea_'+index">Textarea</label>
+                        <input :id="'select_'+index" type="radio" name="field.type" value="select-field" v-model="field.type"><label class="inline" :for="'select_'+index">Select</label>
+                        <input :id="'radio_'+index" type="radio" name="field.type" value="radio-field" v-model="field.type"><label class="inline" :for="'radio_'+index">Radio</label>
+                        <input :id="'checkbox_'+index" type="radio" name="field.type" value="checkbox-field" v-model="field.type"><label class="inline" :for="'checkbox_'+index">Checkbox</label>
+                    </p>
+                    <p v-if="field.showEdit" class="6-col">
+                        <label>Field Name</label>
+                        <input v-model="field.name" placeholder="Field Name" @change="UpdateHTMLData">
+                    </p>
+                    <p v-if="field.showEdit" class="6-col">
+                        <label>Field Label</label>
+                        <input v-model="field.label" placeholder="label" @change="UpdateHTMLData">
+                    </p>
 
+                    <div v-if="field.type === 'select-field'">
+                        <p>Options</p>
+                        <ul>
+                            <li class="border" v-for="(option, opt_index) in field.options" >
+                            <input v-model="field.options[opt_index].value" placeholder="Option Value" @change="UpdateHTMLData">
+                            <input v-model="field.options[opt_index].text" placeholder="Option text" @change="UpdateHTMLData">
+                            </li>
+                        </ul>
+                        <button @click="NewSelectOption(index)">New Option</button>
+                    </div>
 
-	<div v-if="field.type === 'select-field'">
-		<p>Options</p>
-			<ul>
-				<li class="border" v-for="(option, opt_index) in field.options" >
-					<input v-model="field.options[opt_index].value" placeholder="Option Value" @change="UpdateHTMLData">
-					<input v-model="field.options[opt_index].text" placeholder="Option text" @change="UpdateHTMLData">
-				</li>
-			</ul>
-			<button @click="NewSelectOption(index)">New Option</button>
-	</div>
+                    <div v-else-if="field.type === 'input-radio'">
+                    Something else was selected.
+                    </div>
+                    <p class="actions"><span class="edit clickable" v-if="!field.showEdit" @click="openEditor(field)"><i class="icon-font icon-pencil"></i></span><span class="delete clickable" @click="deleteField(index)"><i class="icon-font icon-trash-empty"></i></span></p>
+                </li>
+            </transition-group>
 
-	<div v-else-if="field.type === 'input-radio'">
-	  Something else was selected.
-	</div>
-
-
-	</li>
-  </ul>
-  <button @click="AddField">
-    New Field
-  </button>
-
-
-
-
-    <div id="render-form" ref="formdata" v-model="html" v-cloak>
-        <component
-                 v-for="field in fields"
-                 :key="field.name"
-                 :is="field.type"
-                 v-bind="field">
-        </component>
+            <button @click="AddField">
+            New Field
+            </button>
+        </div>
     </div>
 
-<div id="html-data">
-    <pre><code class="language-html">{{ $data['html'] }}</code></pre>
+    <div class="col-6">
+
+
+        <div class="tabs">
+        	<a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">Form</a>
+        	<a v-on:click="activetab=2; UpdateHTMLData();" v-bind:class="[ activetab === 2 ? 'active' : '' ]">HTML Code</a>
+        </div>
+
+        <div class="content">
+        	<div v-if="activetab === 1" class="tabcontent">
+                <div id="render-form" ref="formdata" v-cloak>
+                    <component
+                             v-for="field in fields"
+                             :key="field.name"
+                             :is="field.type"
+                             v-bind="field">
+                    </component>
+                </div>
+        	</div>
+        	<div v-if="activetab === 2" class="tabcontent">
+                <div id="html-data">
+                    <pre><code class="language-html">{{ $data['html'] }}</code></pre>
+                </div>
+        	</div>
+        </div>
+    </div>
+
+
+<div style="display:none">
+<pre>{{ $data['fields'] | json }}</pre>
 </div>
 
-<pre>{{ $data['fields'] | json }}</pre>
 
 
-
+</div>
+</div>
 </div>
 
 

@@ -76,21 +76,43 @@ let vm = new Vue({
   el: '#app',
   data: {
     fields: [
-		 {"name": "subject", "label": "Subject", "type": "text-field", "options": []},
-		 {"name": "email", "label": "Email", "type": "email-field", "options": []},
-		 {"name": "name", "label": "Your Name", "type": "text-field", "options": []},
-		 {"name": "phone", "label": "Phone number", "type": "text-field", "options": []},
-		 {"name": "website", "label": "Website", "type": "text-field", "options": []},
-		 {"name": "content", "label": "Your Content", "type": "textarea-field", "options": []}
+		 {"name": "subject", "label": "Subject", "type": "text-field", "options": [], "showEdit": false},
+		 {"name": "email", "label": "Email", "type": "email-field", "options": [], "showEdit": false},
+		 {"name": "name", "label": "Your Name", "type": "text-field", "options": [], "showEdit": false},
+		 {"name": "phone", "label": "Phone number", "type": "text-field", "options": [], "showEdit": false},
+		 {"name": "website", "label": "Website", "type": "text-field", "options": [], "showEdit": false},
+		 {"name": "content", "label": "Your Content", "type": "textarea-field", "options": [], "showEdit": false}
 	],
 	html : "",
+	activetab: 1,
   },
   mounted: function() {
 	  this.UpdateHTMLData();
   },
   methods: {
+	openEditor: function (field) {
+		field.showEdit = true;
+		this.fields.forEach((item, index) => {
+			if(! (field == item)){
+				vm.closeEditor(item);
+			}
+		});
+	},
+	closeEditor: function (field) {
+		field.showEdit = false;
+	},
+	closeAllEditor: function () {
+		this.fields.forEach((field, index) => {
+			vm.closeEditor(field);
+		});
+	},
+	deleteField: function (index) {
+		//console.log('hi' + index);
+		this.fields.splice(index, 1);
+	},
     AddField: function () {
-		this.fields.push({ name: 'your_field', label: 'Your New Field', type: 'text-field', options: [{value: '', text: ''}]});
+		vm.closeAllEditor();
+		this.fields.push({ name: 'your_field', label: 'Your New Field', type: 'text-field', options: [{value: '', text: ''}], showEdit: true});
 		vm.UpdateHTMLData();
 	},
     NewSelectOption: function (index, target) {
