@@ -2,16 +2,28 @@ Vue.component('text-field', {
 	inheritAttrs: false,
 	data: function () {
 		return {
+			hover: false,
 		}
 	},
 	template:
-	`<p>
-	<label :for="name"> {{ label }}</label>
-	<input type="text" :name="name" :id="name" />
+	`<p @click="handleClick()" @mouseover="handleMouseOver()" @mouseleave="handleMouseLeave()" >
+	<label :for="name">{{ label }}</label>
+	<input type="text" :name="name" :id="name" :required="required" />
 	</p>`,
 	computed:{
 	},
-	props:["label","name"],
+	methods: {
+	  handleClick() {
+		  this.$emit('click');
+	  },
+	  handleMouseOver() {
+		  this.$emit('mouseover');
+	  },
+	  handleMouseLeave() {
+		  this.$emit('mouseleave');
+	  },
+  	},
+	props:["label","name","required"],
 })
 
 Vue.component('email-field', {
@@ -21,13 +33,24 @@ Vue.component('email-field', {
 		}
 	},
 	template:
-	`<p>
-	<label :for="name"> {{ label }}</label>
-	<input type="email" :name="name" :id="name" />
+	`<p @click="handleClick()" @mouseover="handleMouseOver()" @mouseleave="handleMouseLeave()">
+	<label :for="name">{{ label }}</label>
+	<input type="email" :name="name" :id="name" :required="required" />
 	</p>`,
 	computed:{
 	},
-	props:["label","name"],
+	methods: {
+	  handleClick() {
+		  this.$emit('click');
+	  },
+	  handleMouseOver() {
+		  this.$emit('mouseover');
+	  },
+	  handleMouseLeave() {
+		  this.$emit('mouseleave');
+	  },
+  	},
+	props:["label","name","required"],
 })
 
 Vue.component('select-field', {
@@ -37,13 +60,24 @@ Vue.component('select-field', {
 		}
 	},
 	template:
-	`<p>
-	<label :for="name"> {{ label }}</label>
-	<select :name="name" :id="name" >
+	`<p @click="handleClick()" @mouseover="handleMouseOver()" @mouseleave="handleMouseLeave()">
+	<label :for="name">{{ label }}</label>
+	<select :name="name" :id="name" :required="required">
 		<option :value="option.value" v-for="option in options">{{ option.text }}</option>
 	</select>
 	</p>`,
-	props:["label","name", "options"],
+	methods: {
+	  handleClick() {
+		  this.$emit('click');
+	  },
+	  handleMouseOver() {
+		  this.$emit('mouseover');
+	  },
+	  handleMouseLeave() {
+		  this.$emit('mouseleave');
+	  },
+  	},
+	props:["label","name","options","required"],
 })
 
 Vue.component('textarea-field', {
@@ -53,11 +87,46 @@ Vue.component('textarea-field', {
 		}
 	},
 	template:
-	`<p>
-	<label :for="name"> {{ label }}</label>
-	<textarea :name="name" :id="name" ></textarea>
+	`<p @click="handleClick()" @mouseover="handleMouseOver()" @mouseleave="handleMouseLeave()">
+	<label :for="name">{{ label }}</label>
+	<textarea :name="name" :id="name" :required="required"></textarea>
 	</p>`,
-	props:["label","name"],
+	methods: {
+	  handleClick() {
+		  this.$emit('click');
+	  },
+	  handleMouseOver() {
+		  this.$emit('mouseover');
+	  },
+	  handleMouseLeave() {
+		  this.$emit('mouseleave');
+	  },
+  	},
+	props:["label","name","required"],
+})
+
+Vue.component('checkbox-field', {
+	inheritAttrs: false,
+	data: function () {
+		return {
+		}
+	},
+	template:
+	`<p @click="handleClick()" @mouseover="handleMouseOver()" @mouseleave="handleMouseLeave()">
+	<input type="checkbox"  :name="name" :id="name" :required="required" :value="value"> <label :for="name">{{ label }}</label>
+	</p>`,
+	methods: {
+	  handleClick() {
+		  this.$emit('click');
+	  },
+	  handleMouseOver() {
+		  this.$emit('mouseover');
+	  },
+	  handleMouseLeave() {
+		  this.$emit('mouseleave');
+	  },
+  	},
+	props:["label","name","required","value"],
 })
 
 Vue.component('radio-field', {
@@ -76,17 +145,22 @@ let vm = new Vue({
   el: '#app',
   data: {
     fields: [
-		 {"name": "subject", "label": "Subject", "type": "text-field", "options": [], "showEdit": false},
-		 {"name": "email", "label": "Email", "type": "email-field", "options": [], "showEdit": false},
-		 {"name": "name", "label": "Your Name", "type": "text-field", "options": [], "showEdit": false},
-		 {"name": "phone", "label": "Phone number", "type": "text-field", "options": [], "showEdit": false},
-		 {"name": "website", "label": "Website", "type": "text-field", "options": [], "showEdit": false},
-		 {"name": "content", "label": "Your Content", "type": "textarea-field", "options": [], "showEdit": false}
+		 {"name": "subject", "label": "Subject", "value":"", "type": "text-field", "options": [], "required":false, "showEdit": false, "hover": false},
+		 {"name": "email", "label": "Email", "value":"",  "type": "email-field", "options": [], "required":true, "showEdit": false, "hover": false},
+		 {"name": "name", "label": "Your Name", "value":"",  "type": "text-field", "options":[],  "required":true, "showEdit": false, "hover": false},
+		 {"name": "phone", "label": "Phone number", "value":"",  "type": "text-field", "options": [], "required":false, "showEdit": false, "hover": false},
+		 {"name": "website", "label": "Website", "value":"",  "type": "text-field", "options": [], "required":false, "showEdit": false, "hover": false},
+		 {"name": "content", "label": "Your Content", "value":"", "type": "textarea-field", "options": [], "required":false, "showEdit": false, "hover": false}
 	],
 	html : "",
 	activetab: 1,
   },
-  mounted: function() {
+  created: function(){
+	this.fields.forEach((field, index) => {
+  		field['hover'] = false;
+  	});
+  },
+  updated: function() {
 	  this.UpdateHTMLData();
   },
   methods: {
@@ -112,19 +186,27 @@ let vm = new Vue({
 	},
     AddField: function () {
 		vm.closeAllEditor();
-		this.fields.push({ name: 'your_field', label: 'Your New Field', type: 'text-field', options: [{value: '', text: ''}], showEdit: true});
-		vm.UpdateHTMLData();
+		this.fields.push({ name: 'your_field', label: 'Your New Field', type: 'text-field', options: [{value: '', text: ''}], required: false, showEdit: true});
 	},
     NewSelectOption: function (index, target) {
-		this.fields[index].options.push({value: 'your_option', text: 'Your Option'});
-		vm.UpdateHTMLData();
+		this.fields[index].options.push({value: 'option value', text: 'Option Text'});
 	},
     UpdateHTMLData: function () {
 		var generated = this.$refs.formdata.innerHTML;
   	  	var cleaned = process(generated);
   	  	this.html = cleaned;
 	},
-
+	mouseover: function (field){
+		field.hover = true;
+		this.fields.forEach((item, index) => {
+			if(! (field == item)){
+				item.hover = false;
+			}
+		});
+	},
+	mouseleave: function (field){
+		field.hover = false;
+	},
   }
 });
 
